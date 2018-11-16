@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.termux.widget"
-    android:sharedUserId="com.termux">
+    package="com.linuxdroid.widget"
+    android:sharedUserId="com.linuxdroid">
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -16,18 +16,18 @@
         android:theme="@android:style/Theme.Material.Light.DarkActionBar"
         tools:ignore="GoogleAppIndexingWarning">
         <receiver
-            android:name=".TermuxWidgetProvider"
+            android:name=".LinuxdroidWidgetProvider"
             android:label="@string/shortcut_widget_name" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/termux_appwidget_info" />
+                android:resource="@xml/linuxdroid_appwidget_info" />
         </receiver>
 
         <activity
-            android:name=".TermuxCreateShortcutActivity"
+            android:name=".LinuxdroidCreateShortcutActivity"
             android:label="@string/single_shortcut_name">
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
@@ -35,13 +35,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TermuxLaunchShortcutActivity"
+            android:name=".LinuxdroidLaunchShortcutActivity"
             android:noHistory="true"
             android:theme="@android:style/Theme.NoDisplay"
             android:exported="true"/>
 
         <service
-            android:name=".TermuxWidgetService"
+            android:name=".LinuxdroidWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>

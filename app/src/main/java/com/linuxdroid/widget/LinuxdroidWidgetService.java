@@ -1,4 +1,4 @@
-package com.termux.widget;
+package com.linuxdroid.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,19 +11,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class TermuxWidgetService extends RemoteViewsService {
+public final class LinuxdroidWidgetService extends RemoteViewsService {
 
     @SuppressLint("SdCardPath")
-    public static final File SHORTCUTS_DIR = new File("/data/data/com.termux/files/home/.shortcuts");
+    public static final File SHORTCUTS_DIR = new File("/data/data/com.linuxdroid/files/home/.shortcuts");
 
-    public static final class TermuxWidgetItem {
+    public static final class LinuxdroidWidgetItem {
 
         /** Label to display in the list. */
         public final String mLabel;
-        /** The file which this item represents, sent with the {@link TermuxWidgetProvider#EXTRA_CLICKED_FILE} extra. */
+        /** The file which this item represents, sent with the {@link LinuxdroidWidgetProvider#EXTRA_CLICKED_FILE} extra. */
         public final String mFile;
 
-        public TermuxWidgetItem(File file, int depth) {
+        public LinuxdroidWidgetItem(File file, int depth) {
             this.mLabel = (depth > 0 ? (file.getParentFile().getName() + "/") : "")
                     + file.getName().replace('-', ' ');
             this.mFile = file.getAbsolutePath();
@@ -37,7 +37,7 @@ public final class TermuxWidgetService extends RemoteViewsService {
     }
 
     public static class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
-        private final List<TermuxWidgetItem> mWidgetItems = new ArrayList<>();
+        private final List<LinuxdroidWidgetItem> mWidgetItems = new ArrayList<>();
         private final Context mContext;
 
         public ListRemoteViewsFactory(Context context) {
@@ -64,15 +64,15 @@ public final class TermuxWidgetService extends RemoteViewsService {
         @Override
         public RemoteViews getViewAt(int position) {
             // Position will always range from 0 to getCount() - 1.
-            TermuxWidgetItem widgetItem = mWidgetItems.get(position);
+            LinuxdroidWidgetItem widgetItem = mWidgetItems.get(position);
 
             // Construct remote views item based on the item xml file and set text based on position.
             RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
             rv.setTextViewText(R.id.widget_item, widgetItem.mLabel);
 
             // Next, we set a fill-intent which will be used to fill-in the pending intent template
-            // which is set on the collection view in TermuxAppWidgetProvider.
-            Intent fillInIntent = new Intent().putExtra(TermuxWidgetProvider.EXTRA_CLICKED_FILE, widgetItem.mFile);
+            // which is set on the collection view in LinuxdroidAppWidgetProvider.
+            Intent fillInIntent = new Intent().putExtra(LinuxdroidWidgetProvider.EXTRA_CLICKED_FILE, widgetItem.mFile);
             rv.setOnClickFillInIntent(R.id.widget_item_layout, fillInIntent);
 
             // You can do heaving lifting in here, synchronously. For example, if you need to
@@ -122,7 +122,7 @@ public final class TermuxWidgetService extends RemoteViewsService {
         }
     }
 
-    private static void addFile(File dir, List<TermuxWidgetItem> widgetItems, int depth) {
+    private static void addFile(File dir, List<LinuxdroidWidgetItem> widgetItems, int depth) {
         if (depth > 5) return;
 
         File[] files = dir.listFiles(pathname -> !pathname.getName().startsWith("."));
@@ -139,7 +139,7 @@ public final class TermuxWidgetService extends RemoteViewsService {
             if (file.isDirectory()) {
                 addFile(file, widgetItems, depth + 1);
             } else {
-                widgetItems.add(new TermuxWidgetItem(file, depth));
+                widgetItems.add(new LinuxdroidWidgetItem(file, depth));
             }
         }
 

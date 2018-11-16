@@ -1,4 +1,4 @@
-package com.termux.widget;
+package com.linuxdroid.widget;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,7 +13,7 @@ import android.widget.ListView;
 import java.io.File;
 import java.util.Arrays;
 
-public class TermuxCreateShortcutActivity extends Activity {
+public class LinuxdroidCreateShortcutActivity extends Activity {
 
     private ListView mListView;
     private File mCurrentDirectory;
@@ -30,10 +30,10 @@ public class TermuxCreateShortcutActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        updateListview(TermuxWidgetService.SHORTCUTS_DIR);
+        updateListview(LinuxdroidWidgetService.SHORTCUTS_DIR);
 
         mListView.setOnItemClickListener((parent, view, position, id) -> {
-            final Context context = TermuxCreateShortcutActivity.this;
+            final Context context = LinuxdroidCreateShortcutActivity.this;
             File clickedFile = mCurrentFiles[position];
             if (clickedFile.isDirectory()) {
                 updateListview(clickedFile);
@@ -42,10 +42,10 @@ public class TermuxCreateShortcutActivity extends Activity {
 
             Intent.ShortcutIconResource icon = Intent.ShortcutIconResource.fromContext(context, R.mipmap.ic_launcher);
 
-            Uri scriptUri = new Uri.Builder().scheme("com.termux.file").path(clickedFile.getAbsolutePath()).build();
-            Intent executeIntent = new Intent(context, TermuxLaunchShortcutActivity.class);
+            Uri scriptUri = new Uri.Builder().scheme("com.linuxdroid.file").path(clickedFile.getAbsolutePath()).build();
+            Intent executeIntent = new Intent(context, LinuxdroidLaunchShortcutActivity.class);
             executeIntent.setData(scriptUri);
-            executeIntent.putExtra(TermuxLaunchShortcutActivity.TOKEN_NAME, TermuxLaunchShortcutActivity.getGeneratedToken(context));
+            executeIntent.putExtra(LinuxdroidLaunchShortcutActivity.TOKEN_NAME, LinuxdroidLaunchShortcutActivity.getGeneratedToken(context));
 
             Intent intent = new Intent();
             intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, executeIntent);
@@ -64,12 +64,12 @@ public class TermuxCreateShortcutActivity extends Activity {
 
         Arrays.sort(mCurrentFiles, (f1, f2) -> f1.getName().compareTo(f2.getName()));
 
-        final boolean isTopDir = directory.equals(TermuxWidgetService.SHORTCUTS_DIR);
+        final boolean isTopDir = directory.equals(LinuxdroidWidgetService.SHORTCUTS_DIR);
         getActionBar().setDisplayHomeAsUpEnabled(!isTopDir);
 
         if (isTopDir && mCurrentFiles.length == 0) {
             // Create if necessary so user can more easily add.
-            TermuxWidgetService.SHORTCUTS_DIR.mkdirs();
+            LinuxdroidWidgetService.SHORTCUTS_DIR.mkdirs();
             new AlertDialog.Builder(this)
                     .setMessage(R.string.no_shortcut_scripts)
                     .setOnDismissListener(dialog -> finish()).show();

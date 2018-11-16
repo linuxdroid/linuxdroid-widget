@@ -1,4 +1,4 @@
-package com.termux.widget;
+package com.linuxdroid.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -14,18 +14,18 @@ import android.widget.Toast;
 import java.io.File;
 
 /**
- * Widget providing a list to launch scripts in $HOME/.termux/shortcuts/.
+ * Widget providing a list to launch scripts in $HOME/.linuxdroid/shortcuts/.
  * <p>
  * See https://developer.android.com/guide/topics/appwidgets/index.html
  */
-public final class TermuxWidgetProvider extends AppWidgetProvider {
+public final class LinuxdroidWidgetProvider extends AppWidgetProvider {
 
-    private static final String LIST_ITEM_CLICKED_ACTION = "com.termux.widgets.LIST_ITEM_CLICKED_ACTION";
-    private static final String REFRESH_WIDGET_ACTION = "com.termux.widgets.REFRESH_WIDGET_ACTION";
-    public static final String EXTRA_CLICKED_FILE = "com.termux.widgets.EXTRA_CLICKED_FILE";
+    private static final String LIST_ITEM_CLICKED_ACTION = "com.linuxdroid.widgets.LIST_ITEM_CLICKED_ACTION";
+    private static final String REFRESH_WIDGET_ACTION = "com.linuxdroid.widgets.REFRESH_WIDGET_ACTION";
+    public static final String EXTRA_CLICKED_FILE = "com.linuxdroid.widgets.EXTRA_CLICKED_FILE";
 
-    public static final String TERMUX_SERVICE = "com.termux.app.TermuxService";
-    public static final String ACTION_EXECUTE = "com.termux.service_execute";
+    public static final String LINUXDROID_SERVICE = "com.linuxdroid.app.LinuxdroidService";
+    public static final String ACTION_EXECUTE = "com.linuxdroid.service_execute";
 
 
     /**
@@ -46,8 +46,8 @@ public final class TermuxWidgetProvider extends AppWidgetProvider {
             // of the collection view:
             rv.setEmptyView(R.id.widget_list, R.id.empty_view);
 
-            // Setup intent which points to the TermuxWidgetService which will provide the views for this collection.
-            Intent intent = new Intent(context, TermuxWidgetService.class);
+            // Setup intent which points to the LinuxdroidWidgetService which will provide the views for this collection.
+            Intent intent = new Intent(context, LinuxdroidWidgetService.class);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             // When intents are compared, the extras are ignored, so we need to embed the extras
             // into the data so that the extras will not be ignored.
@@ -55,8 +55,8 @@ public final class TermuxWidgetProvider extends AppWidgetProvider {
             rv.setRemoteAdapter(R.id.widget_list, intent);
 
             // Setup refresh button:
-            Intent refreshIntent = new Intent(context, TermuxWidgetProvider.class);
-            refreshIntent.setAction(TermuxWidgetProvider.REFRESH_WIDGET_ACTION);
+            Intent refreshIntent = new Intent(context, LinuxdroidWidgetProvider.class);
+            refreshIntent.setAction(LinuxdroidWidgetProvider.REFRESH_WIDGET_ACTION);
             refreshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             refreshIntent.setData(Uri.parse(refreshIntent.toUri(Intent.URI_INTENT_SCHEME)));
             PendingIntent refreshPendingIntent = PendingIntent.getBroadcast(context, 0, refreshIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -66,8 +66,8 @@ public final class TermuxWidgetProvider extends AppWidgetProvider {
             // cannot setup their own pending intents, instead, the collection as a whole can
             // setup a pending intent template, and the individual items can set a fillInIntent
             // to create unique before on an item to item basis.
-            Intent toastIntent = new Intent(context, TermuxWidgetProvider.class);
-            toastIntent.setAction(TermuxWidgetProvider.LIST_ITEM_CLICKED_ACTION);
+            Intent toastIntent = new Intent(context, LinuxdroidWidgetProvider.class);
+            toastIntent.setAction(LinuxdroidWidgetProvider.LIST_ITEM_CLICKED_ACTION);
             toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
             PendingIntent toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -87,20 +87,20 @@ public final class TermuxWidgetProvider extends AppWidgetProvider {
                 File clickedFile = new File(clickedFilePath);
                 if (clickedFile.isDirectory()) return;
                 ensureFileReadableAndExecutable(clickedFile);
-                Uri scriptUri = new Uri.Builder().scheme("com.termux.file").path(clickedFilePath).build();
+                Uri scriptUri = new Uri.Builder().scheme("com.linuxdroid.file").path(clickedFilePath).build();
 
-                // Note: Must match TermuxService#ACTION_EXECUTE constant:
+                // Note: Must match LinuxdroidService#ACTION_EXECUTE constant:
                 Intent executeIntent = new Intent(ACTION_EXECUTE, scriptUri);
-                executeIntent.setClassName("com.termux", TERMUX_SERVICE);
+                executeIntent.setClassName("com.linuxdroid", LINUXDROID_SERVICE);
                 if (clickedFile.getParentFile().getName().equals("tasks")) {
-                    executeIntent.putExtra("com.termux.execute.background", true);
+                    executeIntent.putExtra("com.linuxdroid.execute.background", true);
                     // Show feedback for executed background task.
                     String message = "Task executed: " + clickedFile.getName();
                     Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                 }
-                startTermuxService(context, executeIntent);
+                startLinuxdroidService(context, executeIntent);
                 break;
             case REFRESH_WIDGET_ACTION:
                 int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -113,7 +113,7 @@ public final class TermuxWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    static void startTermuxService(Context context, Intent executeIntent) {
+    static void startLinuxdroidService(Context context, Intent executeIntent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // https://developer.android.com/about/versions/oreo/background.html
             context.startForegroundService(executeIntent);
